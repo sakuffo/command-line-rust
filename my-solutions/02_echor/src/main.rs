@@ -1,7 +1,7 @@
 use clap::{App, Arg};
 
-fn main(){
-    let matches = App::new("echor")  // Constructor pattern?
+fn main() {
+    let matches = App::new("echor") // Constructor pattern?
         .version("0.1.0")
         .author("Stephen Akuffo from Ken YC")
         .about("Implements echo in rust")
@@ -15,13 +15,13 @@ fn main(){
         .arg(
             Arg::with_name("omit_newline")
                 .short("n")
+                .long("no-newline")
                 .help("Do not print newline")
                 .takes_value(false),
         )
         .get_matches();
 
-    
-        // println!("{:#?}", matches);
+    // println!("{:#?}", matches);
     let text = matches.values_of_lossy("text").unwrap();
     let omit_newline = matches.is_present("omit_newline");
 
