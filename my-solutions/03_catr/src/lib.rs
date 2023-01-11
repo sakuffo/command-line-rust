@@ -50,24 +50,26 @@ pub fn get_args() -> MyResult<Config> {
 
 pub fn run(config: Config) -> MyResult<()> {
     for filename in config.files {
-        // open the file at path filename with the open function safe code only
-        let mut reader = open(&filename)?;
-        let mut line_number = 1;
-        // read the file line by line
-        for line in reader.lines() {
-            let line = line?;
-            if config.number_lines {
-                println!("{} {}", line_number, line);
-            } else if config.number_nonblank_lines {
-                if line.len() > 0 {
-                    println!("{} {}", line_number, line);
-                } else {
-                    println!("{}", line);
+        match open(&filename) {
+            Err(e) => eprintln!("{}: {}", filename, e),
+            Ok(file) => {
+                let mut last_num = 0;
+                for (line_num, line_result) in file.lines().enumerate() {
+                    let line = line_result?;
+                    if config.number_lines {
+                        println!("{:6}\t{}", line_num + 1, line);
+                    } else if config.number_nonblank_lines {
+                        if !line.is_empty() {
+                            last_num += 1;
+                            println!("{:6}\t{}", last_num, line)
+                        } else {
+                            println!();
+                        }
+                    } else {
+                        println!("{}", line);
+                    }
                 }
-            } else {
-                println!("{}", line);
             }
-            line_number += 1;
         }
     }
     Ok(())
